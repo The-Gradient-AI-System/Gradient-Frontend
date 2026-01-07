@@ -5,21 +5,22 @@ import { FiUser } from 'react-icons/fi';
 const SidebarContainer = styled.aside`
   width: 140px;
   padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: ${({ theme }) => theme.colors.sidebarBackground};
   display: flex;
   flex-direction: column;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: 16px;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 24px ${({ theme }) => theme.colors.shadow};
   position: sticky;
   top: 1.5rem;
   margin: 1.5rem 1.5rem 1.5rem 0;
   align-self: stretch;
   min-height: calc(100vh - 5rem);
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 `;
 
 const Title = styled.h3`
-  color: #f0f0f0;
+  color: ${({ theme }) => theme.colors.text};
   margin-bottom: 1.5rem;
   font-weight: 600;
   letter-spacing: 0.3px;
@@ -44,7 +45,7 @@ const ManagerItem = styled.li`
   transition: background 0.2s ease;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.04);
+    background: ${({ theme }) => theme.colors.hover};
   }
 `;
 
@@ -58,7 +59,7 @@ const Avatar = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.border};
 `;
 
 const StatusIndicator = styled.span`
@@ -68,7 +69,7 @@ const StatusIndicator = styled.span`
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  border: 2px solid #1b1c2f;
+  border: 2px solid ${({ theme }) => theme.colors.sidebarBackground};
   background-color: ${props => (props.status === 'online' ? '#21ff00' : props.status === 'away' ? '#9ca3af' : '#dc3545')};
 `;
 
@@ -80,7 +81,7 @@ const ManagerInfo = styled.div`
 
   p {
     margin: 0;
-    color: #ffffff;
+    color: ${({ theme }) => theme.colors.text};
     font-size: 1.1rem;
     font-weight: 600;
     text-align: center;

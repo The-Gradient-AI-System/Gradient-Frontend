@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 const DashboardGrid = styled.div`
@@ -30,16 +30,17 @@ const DashboardGrid = styled.div`
 `;
 
 const Card = styled.div`
-  background: linear-gradient(180deg, #25274d 0%, #22244a 100%);
+  background: ${({ theme }) => theme.colors.cardBackground};
   padding: 2rem;
   border-radius: 16px;
-  color: #f0f0f0;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  color: ${({ theme }) => theme.colors.text};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  box-shadow: 0 8px 24px ${({ theme }) => theme.colors.shadow};
+  transition: background 0.3s ease, color 0.3s ease;
 
   h3 {
     margin-top: 0;
-    color: #e6e6e6;
+    color: ${({ theme }) => theme.colors.text};
     font-weight: 600;
     font-size: 1.4rem;
   }
@@ -53,7 +54,7 @@ const StatCard = styled(Card)`
     margin: 0.5rem 0;
   }
   p {
-    color: #d8d8d8;
+    color: ${({ theme }) => theme.colors.textSecondary};
     font-size: 1.05rem;
   }
 `;
@@ -75,9 +76,9 @@ const ChartHeader = styled.div`
 
 const PeriodBadge = styled.button`
   appearance: none;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.06);
-  color: #d8d8d8;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  background: ${({ theme }) => theme.colors.hover};
+  color: ${({ theme }) => theme.colors.textSecondary};
   padding: 0.4rem 0.75rem;
   border-radius: 12px;
   font-size: 0.9rem;
@@ -85,8 +86,8 @@ const PeriodBadge = styled.button`
   transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
+    background: ${({ theme }) => theme.colors.border};
+    color: ${({ theme }) => theme.colors.text};
   }
 `;
 
@@ -132,6 +133,7 @@ const COLORS = ['#34D399', '#313346'];
 
 const Analytics = () => {
   const [period, setPeriod] = useState('year');
+  const theme = useTheme();
 
   const dataset = period === 'year' ? lineChartData : period === 'quarter' ? quarterlyData : monthlyData;
 
@@ -158,7 +160,7 @@ const Analytics = () => {
             <Pie data={pieChartData} cx="50%" cy="50%" innerRadius={85} outerRadius={110} startAngle={90} endAngle={450} paddingAngle={0} dataKey="value">
               {pieChartData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
             </Pie>
-            <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" fontSize="56" fill="#fff">65%</text>
+            <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" fontSize="56" fill={theme.colors.text}>65%</text>
           </PieChart>
         </ResponsiveContainer>
       </PercentageCard>

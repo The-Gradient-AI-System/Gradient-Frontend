@@ -1,19 +1,20 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import { FiUser } from 'react-icons/fi';
-import userAvatar from '../assets/user.jpg'; 
+import userAvatar from '../assets/user.jpg';
+import ThemeToggle from './ThemeToggle'; 
 
 const HeaderContainer = styled.header`
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background: linear-gradient(180deg, #1b1c2f 0%, #18192b 100%);
-  color: #f0f0f0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+  background: ${({ theme }) => theme.colors.headerBackground};
+  color: ${({ theme }) => theme.colors.text};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+  box-shadow: 0 2px 12px ${({ theme }) => theme.colors.shadow};
   position: relative;
+  transition: background 0.3s ease, border-color 0.3s ease;
 `;
 
 const Nav = styled.nav`
@@ -24,7 +25,7 @@ const Nav = styled.nav`
   transform: translateX(-50%);
 
   a {
-    color: #a9a9a9;
+    color: ${({ theme }) => theme.colors.textSecondary};
     text-decoration: none;
     margin: 0 1.25rem;
     font-size: 1.2rem;
@@ -34,13 +35,13 @@ const Nav = styled.nav`
     opacity: 0.9;
 
     &:hover {
-      color: #e6e6e6;
+      color: ${({ theme }) => theme.colors.text};
       opacity: 1;
     }
 
     &.active {
-      color: #f0f0f0;
-      border-bottom: 3px solid #4BA3FF;
+      color: ${({ theme }) => theme.colors.text};
+      border-bottom: 3px solid ${({ theme }) => theme.colors.primary};
     }
   }
 `;
@@ -52,14 +53,14 @@ const UserMenu = styled.div`
   button {
     background: none;
     border: none;
-    color: #a9a9a9;
+    color: ${({ theme }) => theme.colors.textSecondary};
     cursor: pointer;
     font-size: 1rem;
     margin-right: 1.5rem;
     transition: color 0.2s ease, opacity 0.2s ease;
 
     &:hover {
-      color: #ffffff;
+      color: ${({ theme }) => theme.colors.text};
       opacity: 1;
     }
   }
@@ -68,7 +69,7 @@ const UserMenu = styled.div`
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.border};
   }
 `;
 
@@ -81,7 +82,7 @@ const UserAvatar = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.border};
 `;
 
 const AvatarImage = styled.img`
@@ -98,13 +99,14 @@ const StatusIndicator = styled.span`
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  border: 2px solid #1b1c2f;
+  border: 2px solid ${({ theme }) => theme.colors.headerBackground};
   background-color: #21ff00; /* online */
 `;
 
 const Header = () => {
   return (
     <HeaderContainer>
+      <ThemeToggle />
       <Nav>
         <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : '')}>Аналітика</NavLink>
         <NavLink to="/automation" className={({ isActive }) => (isActive ? 'active' : '')}>Автоматизація</NavLink>
