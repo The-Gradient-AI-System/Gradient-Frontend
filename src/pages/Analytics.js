@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { getGmailLeads } from '../api/client';
 
 const DashboardGrid = styled.div`
   display: grid;
@@ -27,6 +28,16 @@ const DashboardGrid = styled.div`
       'percentage'
       'clients';
   }
+`;
+
+const StatusBanner = styled.div`
+  margin: 0 0 1rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: 12px;
+  background: ${({ $variant }) => ($variant === 'error' ? 'rgba(255, 77, 79, 0.15)' : 'rgba(75, 163, 255, 0.16)')};
+  color: ${({ $variant }) => ($variant === 'error' ? '#ff898a' : '#4ba3ff')};
+  font-size: 0.9rem;
+  font-weight: 500;
 `;
 
 const Card = styled.div`
@@ -100,42 +111,114 @@ const PercentageCard = styled(Card)`
   min-height: 360px;
 `;
 
-const lineChartData = [
-  { name: 'JAN', uv: 20, pv: 30 },
-  { name: 'FEB', uv: 30, pv: 25 },
-  { name: 'MAR', uv: 40, pv: 50 },
-  { name: 'APR', uv: 30, pv: 35 },
-  { name: 'MAY', uv: 50, pv: 60 },
-  { name: 'JUN', uv: 40, pv: 30 },
-  { name: 'JUL', uv: 60, pv: 70 },
-  { name: 'AUG', uv: 55, pv: 65 },
-  { name: 'SEP', uv: 70, pv: 80 },
-  { name: 'OCT', uv: 80, pv: 90 },
-  { name: 'NOV', uv: 85, pv: 95 },
-  { name: 'DEC', uv: 90, pv: 100 },
+const zeroLineChart = [
+  { name: 'JAN', uv: 0, pv: 0 },
+  { name: 'FEB', uv: 0, pv: 0 },
+  { name: 'MAR', uv: 0, pv: 0 },
+  { name: 'APR', uv: 0, pv: 0 },
+  { name: 'MAY', uv: 0, pv: 0 },
+  { name: 'JUN', uv: 0, pv: 0 },
+  { name: 'JUL', uv: 0, pv: 0 },
+  { name: 'AUG', uv: 0, pv: 0 },
+  { name: 'SEP', uv: 0, pv: 0 },
+  { name: 'OCT', uv: 0, pv: 0 },
+  { name: 'NOV', uv: 0, pv: 0 },
+  { name: 'DEC', uv: 0, pv: 0 },
 ];
 
-const quarterlyData = [
-  { name: 'OCT', uv: 80, pv: 90 },
-  { name: 'NOV', uv: 85, pv: 95 },
-  { name: 'DEC', uv: 90, pv: 100 },
+const zeroQuarterly = [
+  { name: 'Q1', uv: 0, pv: 0 },
+  { name: 'Q2', uv: 0, pv: 0 },
+  { name: 'Q3', uv: 0, pv: 0 },
 ];
 
-const monthlyData = [
-  { name: 'W1', uv: 18, pv: 22 },
-  { name: 'W2', uv: 24, pv: 28 },
-  { name: 'W3', uv: 20, pv: 26 },
-  { name: 'W4', uv: 27, pv: 30 },
+const zeroMonthly = [
+  { name: 'W1', uv: 0, pv: 0 },
+  { name: 'W2', uv: 0, pv: 0 },
+  { name: 'W3', uv: 0, pv: 0 },
+  { name: 'W4', uv: 0, pv: 0 },
 ];
 
-const pieChartData = [{ value: 65 }, { value: 35 }];
+const zeroPieChart = [{ value: 0 }, { value: 0 }];
 const COLORS = ['#34D399', '#313346'];
 
 const Analytics = () => {
   const [period, setPeriod] = useState('year');
   const theme = useTheme();
+  const [lineData, setLineData] = useState(zeroLineChart);
+  const [quarterData, setQuarterData] = useState(zeroQuarterly);
+  const [monthData, setMonthData] = useState(zeroMonthly);
+  const [pieData, setPieData] = useState(zeroPieChart);
+  const [summary, setSummary] = useState({
+    active: 0,
+    completed: 0,
+    percentage: 0,
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const dataset = period === 'year' ? lineChartData : period === 'quarter' ? quarterlyData : monthlyData;
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchAnalytics = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await getGmailLeads();
+
+        if (cancelled || !response) return;
+
+        if (Array.isArray(response?.line)) {
+          setLineData(response.line.length ? response.line : zeroLineChart);
+        }
+
+        if (Array.isArray(response?.quarter)) {
+          setQuarterData(response.quarter.length ? response.quarter : zeroQuarterly);
+        }
+
+        if (Array.isArray(response?.month)) {
+          setMonthData(response.month.length ? response.month : zeroMonthly);
+        }
+
+        if (Array.isArray(response?.pie)) {
+          setPieData(response.pie.length ? response.pie : zeroPieChart);
+        }
+
+        if (response?.stats) {
+          setSummary(prev => ({
+            active: response.stats.active ?? prev.active,
+            completed: response.stats.completed ?? prev.completed,
+            percentage: response.stats.percentage ?? prev.percentage,
+          }));
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err?.message || 'Не вдалося завантажити аналітику.');
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchAnalytics();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const dataset = useMemo(() => {
+    switch (period) {
+      case 'quarter':
+        return quarterData;
+      case 'month':
+        return monthData;
+      default:
+        return lineData;
+    }
+  }, [period, lineData, quarterData, monthData]);
 
   const cyclePeriod = () => {
     setPeriod(p => (p === 'month' ? 'quarter' : p === 'quarter' ? 'year' : 'month'));
@@ -145,22 +228,24 @@ const Analytics = () => {
     <DashboardGrid>
       <StatCard area="active" $accent>
         <h3>Дані 1</h3>
-        <h2>37</h2>
+        <h2>{summary.active}</h2>
         <p>активних проєктів</p>
       </StatCard>
       <StatCard area="completed">
         <h3>Дані 2</h3>
-        <h2>124</h2>
+        <h2>{summary.completed}</h2>
         <p>завершено за період</p>
       </StatCard>
       <PercentageCard>
         <h3>Дані 3</h3>
         <ResponsiveContainer width="100%" height={240}>
           <PieChart>
-            <Pie data={pieChartData} cx="50%" cy="50%" innerRadius={85} outerRadius={110} startAngle={90} endAngle={450} paddingAngle={0} dataKey="value">
-              {pieChartData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
+            <Pie data={pieData} cx="50%" cy="50%" innerRadius={85} outerRadius={110} startAngle={90} endAngle={450} paddingAngle={0} dataKey="value">
+              {pieData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
             </Pie>
-            <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" fontSize="56" fill={theme.colors.text}>65%</text>
+            <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" fontSize="56" fill={theme.colors.text}>
+              {summary.percentage}%
+            </text>
           </PieChart>
         </ResponsiveContainer>
       </PercentageCard>
@@ -171,6 +256,8 @@ const Analytics = () => {
             Період: {period === 'year' ? 'Рік' : period === 'quarter' ? 'Квартал' : 'Місяць'}
           </PeriodBadge>
         </ChartHeader>
+        {loading && <StatusBanner>Завантажуємо аналітику…</StatusBanner>}
+        {error && <StatusBanner $variant="error">{error}</StatusBanner>}
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={dataset}>
             <CartesianGrid strokeDasharray="3 3" stroke="#3a3d6b" />
