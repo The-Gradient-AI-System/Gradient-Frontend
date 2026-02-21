@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 import { FiCamera, FiEye, FiEyeOff } from 'react-icons/fi';
 import userAvatar from '../assets/user.jpg';
 
@@ -176,7 +176,6 @@ const SuccessBadge = styled.span`
 `;
 
 const Profile = () => {
-  const theme = useTheme();
   const fileInputRef = useRef(null);
   const previewUrlRef = useRef(null);
   const [avatar, setAvatar] = useState(userAvatar);

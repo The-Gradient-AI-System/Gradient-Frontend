@@ -159,8 +159,6 @@ const Settings = () => {
     };
   }, []);
 
-  const hasChanges = useMemo(() => Boolean(statusMessage && statusMessage.includes('успішно')), [statusMessage]);
-
   const handlePromptChange = (field) => (event) => {
     const value = event.target.value;
     setPrompts((prev) => ({ ...prev, [field]: value }));

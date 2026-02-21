@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { FiPaperclip, FiFile, FiX } from 'react-icons/fi';
 import { getGmailLeads, postGenerateReplies, postLeadStatus } from '../api/client';
@@ -1096,12 +1096,6 @@ const ReplyComposerButton = styled.button`
   &:active {
     transform: translateY(0);
   }
-`;
-
-const ReplyVariantsRow = styled.div`
-  display: flex;
-  gap: 0.6rem;
-  flex-wrap: wrap;
 `;
 
 const ReplyVariantButton = styled.button`
