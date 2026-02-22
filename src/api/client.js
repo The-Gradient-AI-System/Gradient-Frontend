@@ -1,6 +1,9 @@
-const DEFAULT_API_URL = 'http://127.0.0.1:8000';
+const DEFAULT_LOCAL_API_URL = 'http://127.0.0.1:8000';
+const DEFAULT_PRODUCTION_API_URL = 'https://gradient-backend-xb7i.onrender.com';
 
-const API_URL = (typeof process !== 'undefined' && process.env.REACT_APP_API_URL) || DEFAULT_API_URL;
+const API_URL =
+  (typeof process !== 'undefined' && process.env.REACT_APP_API_URL) ||
+  (typeof process !== 'undefined' && process.env.NODE_ENV === 'production' ? DEFAULT_PRODUCTION_API_URL : DEFAULT_LOCAL_API_URL);
 
 let authToken = null;
 
