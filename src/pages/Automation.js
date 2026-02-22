@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import styled, { useTheme } from 'styled-components';
+import styled, { useTheme } from 'styled-components'; // useTheme used in component
 import { FiPaperclip, FiFile, FiX } from 'react-icons/fi';
 import { getGmailLeads, postGenerateReplies, postLeadStatus } from '../api/client';
 import { useAuth } from '../context/AuthContext';

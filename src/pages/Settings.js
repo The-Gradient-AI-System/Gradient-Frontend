@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { FiRefreshCcw, FiSave } from 'react-icons/fi';
 import { getReplyPrompts, updateReplyPrompts } from '../api/client';

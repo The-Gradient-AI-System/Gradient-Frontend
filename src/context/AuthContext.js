@@ -246,6 +246,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- pushNotification is stable, other deps intentionally omitted
   }, [pushNotification]);
 
   const updateLeadSnapshot = useCallback(
