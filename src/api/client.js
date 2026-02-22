@@ -59,15 +59,22 @@ const request = async (path, options = {}) => {
     headers.set('Authorization', `Bearer ${authToken}`);
   }
 
-  const response = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers,
-  });
+  let response;
+  try {
+    response = await fetch(`${API_URL}${path}`, {
+      ...options,
+      headers,
+    });
+  } catch (networkError) {
+    const msg = networkError?.message || 'Failed to fetch';
+    throw new Error(`0 ${msg}`);
+  }
 
   if (!response.ok) {
     const errorBody = await parseJsonSafely(response).catch(() => null);
     const detail = errorBody?.detail || errorBody?.message;
-    throw new Error(detail || response.statusText || 'Request failed');
+    const text = detail || response.statusText || 'Request failed';
+    throw new Error(`${response.status} ${text}`);
   }
 
   if (response.status === 204) {

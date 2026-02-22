@@ -233,21 +233,11 @@ const Helper = styled.p`
   color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
-const Message = styled.div`
-  text-align: center;
-  padding: 0.75rem 1rem;
-  border-radius: 14px;
-  background: ${({ $variant }) => ($variant === 'error' ? 'rgba(255, 77, 79, 0.15)' : 'rgba(52, 211, 153, 0.18)')};
-  color: ${({ $variant }) => ($variant === 'error' ? '#ff4d4f' : '#16db65')};
-  font-size: 0.9rem;
-  font-weight: 500;
-`;
-
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const { login, loading, error, clearError, isAuthenticated } = useAuth();
+  const { login, loading, clearError, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -265,12 +255,12 @@ const Login = () => {
   };
 
   const handleEmailChange = event => {
-    if (error) clearError();
+    clearError();
     setEmail(event.target.value);
   };
 
   const handlePasswordChange = event => {
-    if (error) clearError();
+    clearError();
     setPassword(event.target.value);
   };
 
@@ -337,7 +327,6 @@ const Login = () => {
         </SecondaryButton>
 
         <Helper>Справжня авторизація з'явиться після підключення бекенду.</Helper>
-        {error && <Message $variant="error">{error}</Message>}
       </Card>
     </Background>
   );
