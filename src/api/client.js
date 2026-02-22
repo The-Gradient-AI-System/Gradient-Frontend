@@ -1,9 +1,23 @@
 const DEFAULT_LOCAL_API_URL = 'http://127.0.0.1:8000';
 const DEFAULT_PRODUCTION_API_URL = 'https://gradient-backend-xb7i.onrender.com';
 
-const API_URL =
-  (typeof process !== 'undefined' && process.env.REACT_APP_API_URL) ||
-  (typeof process !== 'undefined' && process.env.NODE_ENV === 'production' ? DEFAULT_PRODUCTION_API_URL : DEFAULT_LOCAL_API_URL);
+function getApiUrl() {
+  if (typeof process !== 'undefined' && process.env.REACT_APP_API_URL) {
+    return process.env.REACT_APP_API_URL;
+  }
+  if (typeof window !== 'undefined' && window.location?.origin) {
+    const origin = window.location.origin;
+    if (origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1')) {
+      return DEFAULT_LOCAL_API_URL;
+    }
+    return DEFAULT_PRODUCTION_API_URL;
+  }
+  return typeof process !== 'undefined' && process.env.NODE_ENV === 'production'
+    ? DEFAULT_PRODUCTION_API_URL
+    : DEFAULT_LOCAL_API_URL;
+}
+
+const API_URL = getApiUrl();
 
 let authToken = null;
 
